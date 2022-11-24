@@ -1,0 +1,13 @@
+# dependencies
+node_modules
+
+# build artifact
+build
+
+# key files
+private.pem
+public.pem
+
+# miscellaneous
+.vscode
+.DS_Store
