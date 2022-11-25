@@ -5,7 +5,7 @@ export interface JwtHeader {
 
 export interface JwtPayload {
   id?: string;
-  data?: string;
+  data?: any;
   issued: Date;
   expires: Date;
 }

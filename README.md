@@ -49,6 +49,8 @@ To create a public/private RSA key pair:
 
 If your `private.pem` token is in the root-level `/keys/` directory, call the `generateToken` function with its required parameters & the custom payload.
 
+_Note_: The generated token must include `issued` and `expires` Date fields.
+
 ### Authenticating a signed token
 
 If your `public.pem` token is in the root-level `/keys/` directory, call the `isTokenAuthentic` function with the token string.
