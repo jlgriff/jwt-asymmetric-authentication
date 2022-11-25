@@ -11,6 +11,6 @@ export interface JwtPayload {
 }
 
 export interface JwtValid {
-  valid: boolean;
-  invalidReason?: string;
+  authentic: boolean;
+  inauthenticReason?: string;
 }

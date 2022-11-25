@@ -4,7 +4,7 @@ import crypto, {
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { JwtHeader, JwtPayload, JwtValid as JwtValidity } from '../interface/authentication.js';
+import { JwtHeader, JwtPayload, JwtValid as JwtAuthenticity } from '../interface/authentication.js';
 import { privateKeyPath, publicKeyPath } from '../configs/index.js';
 
 let privateKey: KeyObject | undefined;
@@ -118,35 +118,35 @@ export const generateToken = async (payload: JwtPayload) => {
 };
 
 /**
- * Determines whether a JWT token is valid or not
+ * Determines whether a JWT token can be validated and authenticated or not
  *
  * @param token - JWT token
- * @returns whether the JWT token is valid and, if not, the reason it is invalid
+ * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
  */
-export const isValidToken = async (token: string): Promise<JwtValidity> => {
+export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> => {
   if (!publicKey) {
     publicKey = await loadPublicKey();
   }
 
   const parts: string[] = token.split('.');
   if (parts.length < 3) {
-    return { valid: false, invalidReason: 'JWT does not have a header, payload, and signature' };
+    return { authentic: false, inauthenticReason: 'JWT does not have a header, payload, and signature' };
   }
 
   const header: JwtHeader = base64UrlDecodeToJSON(parts[0]);
   const payload: JwtPayload = base64UrlDecodeToJSON(parts[1]);
   if (header.alg !== 'RS256' || header.typ !== 'JWT') {
-    return { valid: false, invalidReason: 'JWT header is incorrect' };
+    return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
   }
 
   const signature = parts[2];
   const { expires } = payload;
-  if (expires && expires < new Date()) { return { valid: false, invalidReason: 'JWT is expired' }; }
+  if (expires && expires < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
 
   const verify: Verify = crypto.createVerify('RSA-SHA256');
   verify.update(`${parts[0]}.${parts[1]}`);
 
-  const publicKeyValid: boolean = verify.verify(publicKey, signature, 'base64url');
-  const invalidReason = publicKeyValid ? undefined : 'JWT failed to validate against the public key';
-  return { valid: publicKeyValid, invalidReason };
+  const isAuthentic: boolean = verify.verify(publicKey, signature, 'base64url');
+  const inauthenticReason = isAuthentic ? undefined : 'JWT failed to authenticate against the public key';
+  return { authentic: isAuthentic, inauthenticReason };
 };
