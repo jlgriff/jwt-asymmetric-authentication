@@ -1,14 +1,26 @@
 {
   "name": "jwt-asymmetric-authentication",
   "version": "1.0.0",
+  "description": "A library to implement asymmetric authentication. JWTs can be signed with a private key and then authenticated with a public key.",
+  "keywords": [
+    "jwt",
+    "asymmetric",
+    "authentication",
+    "typescript",
+    "node"
+  ],
+  "homepage": "https://github.com/jlgriff/jwt-asymmetric-authentication",
+  "bugs": {
+    "url": "https://github.com/jlgriff/jwt-asymmetric-authentication/issues"
+  },
+  "license": "MIT",
+  "files": ["*"],
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
     "build": "npx tsc",
     "test": "jest --config jestconfig.json"
   },
-  "files": [
-    "lib/**/*"
-  ],
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.2.3",
