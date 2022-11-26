@@ -1,6 +1,7 @@
 export interface JwtHeader {
   alg: 'RS256';
   typ: 'JWT';
+  data?: any;
 }
 
 export interface JwtPayload {
@@ -10,7 +11,7 @@ export interface JwtPayload {
   expires: Date;
 }
 
-export interface JwtValid {
+export interface JwtAuthenticity {
   authentic: boolean;
   inauthenticReason?: string;
 }
