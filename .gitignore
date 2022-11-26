@@ -2,7 +2,7 @@
 node_modules
 
 # build artifact
-build
+/lib
 
 # key files
 private.pem

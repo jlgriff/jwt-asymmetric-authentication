@@ -6,8 +6,10 @@
     "build": "npx tsc",
     "test": "jest --config jestconfig.json"
   },
-  "dependencies": {
-  },
+  "files": [
+    "lib/**/*"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
