@@ -5,7 +5,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { JwtHeader, JwtPayload, JwtValid as JwtAuthenticity } from '../interface/authentication.js';
-import { privateKeyPath, publicKeyPath } from '../configs/index.js';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;
@@ -38,7 +37,7 @@ const getDirectory = (): string => path.dirname(fileURLToPath(import.meta.url));
 const loadPublicKey = async (): Promise<KeyObject> => {
   let filepath;
   try {
-    filepath = path.resolve(`${getDirectory()}${publicKeyPath}`);
+    filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PUBLIC}`);
     const rsaKey = await fs.readFile(filepath, 'utf-8');
     return createPublicKey(rsaKey);
   } catch (e) {
@@ -54,7 +53,7 @@ const loadPublicKey = async (): Promise<KeyObject> => {
 const loadPrivateKey = async (): Promise<KeyObject> => {
   let filepath;
   try {
-    filepath = path.resolve(`${getDirectory()}${privateKeyPath}`);
+    filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PRIVATE}`);
     const rsaKey = await fs.readFile(filepath, 'utf-8');
     return createPrivateKey(rsaKey);
   } catch (e) {

@@ -1,10 +1,12 @@
 # Contents
 
 1. [Introduction](#introduction)
-2. [Authentication](#authentication)
+2. [Installation](#installation)
+3. [Authentication](#authentication)
    1. [Creating an RSA key pair](#creating-an-rsa-key-pair)
-   1. [Creating a signed token](#creating-a-signed-token)
-   1. [Authenticating a signed token](#authenticating-a-signed-token)
+   2. [Adding .env configs](#adding-env-configs)
+   3. [Creating a signed token](#creating-a-signed-token)
+   4. [Authenticating a signed token](#authenticating-a-signed-token)
 
 # Introduction
 
@@ -26,6 +28,16 @@ By implementing **asymmetric** authentication though:
 
 Thus, this solution avoids both the bottleneck and the security concerns that come with symmetric authentication.
 
+# Installation
+
+This repo can be used as a dependency by pulling it from from the [public GitHub repository](https://github.com/jlgriff/jwt-asymmetric-authentication). To do this, the following can be added to the `dependencies` block in the project's `package.json`:
+
+```
+"jwt-asymmetric-authentication": "git+ssh://git@github.com:jlgriff/jwt-asymmetric-authentication.git#main"
+```
+
+_Note: This hasn't been published to npm. If you want to see it published, let me know by creating an issue on the [Issues](https://github.com/jlgriff/jwt-asymmetric-authentication/issues) page._
+
 # Authentication
 
 The `generateToken` function will create signed tokens with the private key while the `isTokenAuthentic` function will validate those tokens with the public key.
@@ -44,6 +56,13 @@ To create a public/private RSA key pair:
    ```
 3. Create a root-level `/keys/` directory in the service implementing this module. If the service needs to _authenticate_ tokens, add the `public.pem` key to the `/keys/` directory. If the service needs to _create_ tokens, add the `private.pem` key to the `/keys/` directory.
 4. **Do not commit your key files!** Ensure that your public & private key files are listed in your .gitignore.
+
+### Adding .env configs
+
+Add the following configs to the service's `.env` file:
+
+1. `KEY_PATH_PRIVATE`: The filepath to the private key. e.g. `/keys/private.pem`
+2. `KEY_PATH_PUBLIC`: The filepath to the public key. e.g. `/keys/public.pem`
 
 ### Creating a signed token
 
