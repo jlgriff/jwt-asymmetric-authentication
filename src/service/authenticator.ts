@@ -36,12 +36,15 @@ const getDirectory = (): string => path.dirname(fileURLToPath(import.meta.url));
  */
 const loadPublicKey = async (): Promise<KeyObject> => {
   let filepath;
+  if (!process.env.KEY_PATH_PUBLIC) {
+    throw new Error('No KEY_PATH_PUBLIC .env config has been set. Set it to the filepath of the public key.  e.g. \'/keys/public.pem\'');
+  }
   try {
     filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PUBLIC}`);
     const rsaKey = await fs.readFile(filepath, 'utf-8');
     return createPublicKey(rsaKey);
   } catch (e) {
-    throw new Error(`No public key file could be found at ${filepath}. Make sure that the KEY_PATH_PUBLIC env config has been set and is pointed to the correct relative filepath.`);
+    throw new Error(`No public key file could be found at ${filepath}. Make sure that the KEY_PATH_PUBLIC .env config has been set and is pointed to the correct filepath.`);
   }
 };
 
@@ -52,6 +55,9 @@ const loadPublicKey = async (): Promise<KeyObject> => {
  */
 const loadPrivateKey = async (): Promise<KeyObject> => {
   let filepath;
+  if (!process.env.KEY_PATH_PRIVATE) {
+    throw new Error('No KEY_PATH_PRIVATE .env config has been set. Set it to the filepath of the private key. e.g. \'/keys/private.pem\'');
+  }
   try {
     filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PRIVATE}`);
     const rsaKey = await fs.readFile(filepath, 'utf-8');
