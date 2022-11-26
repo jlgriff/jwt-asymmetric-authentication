@@ -1,1 +1,1 @@
-export { generateToken, isTokenAuthentic } from './service/authenticator.js';
+export { generateToken, isTokenAuthentic, calculateTokenExpiration } from './service/authenticator.js';
