@@ -14,7 +14,7 @@
     "url": "https://github.com/jlgriff/jwt-asymmetric-authentication/issues"
   },
   "license": "MIT",
-  "files": ["*"],
+  "files": ["package.json", "README.md", "/dist"],
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
