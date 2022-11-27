@@ -1,9 +1,6 @@
 # dependencies
 node_modules
 
-# build artifact
-/lib
-
 # key files
 private.pem
 public.pem
