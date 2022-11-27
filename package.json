@@ -1,6 +1,7 @@
 {
   "name": "jwt-asymmetric-authentication",
   "version": "1.0.0",
+  "author": "John Griffith",
   "description": "A library to implement asymmetric authentication. JWTs can be signed with a private key and then authenticated with a public key.",
   "keywords": [
     "jwt",
