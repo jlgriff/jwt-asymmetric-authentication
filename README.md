@@ -10,13 +10,13 @@
 
 # Introduction
 
-This module can be used to implement asymmetric authentication in a node.js architecture. Using the functions here, JWT tokens can not only be signed with a private key, but also have their authenticity validated with a public key.
+This module can implement asymmetric authentication of JWTs in a node.js architecture. The functions here allow tokens to be signed with a private key and then be authenticated with a public key. This means that only those services that create tokens need the private key.
 
 **Why would you want to do this?**
 
 This pattern is useful in a system architecture with multiple backend services communicating with each other.
 
-If authenticate was **symmetric**, either:
+If the system's authentication was **symmetric**, either:
 
 1. Only one service would have the JWT secret key, which means that all other services have to validate their tokens against that keyholding service. This creates a bottleneck, since all requests with tokens have to get authenticated via that service.
 2. Each service that needs to authenticate tokens has a copy of the JWT secret key, which reduces security by duplicating the secret and allowing multiple services to be able to sign valid tokens.
