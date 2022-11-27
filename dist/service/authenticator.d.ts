@@ -8,6 +8,20 @@ import { JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
  */
 export declare const calculateTokenExpiration: (date: Date, minutesToAdd: number) => Date;
 /**
+ * Encodes a JSON object into a base64url-encoded string
+ *
+ * @param json - JSON object to encode
+ * @returns a base64url-encoded string
+ */
+export declare const base64UrlEncode: (json: any) => string;
+/**
+ * Decodes a base64url-encoded string into a JSON object
+ *
+ * @param encoded - base64url-encoded string
+ * @returns a decoded JSON object
+ */
+export declare const base64UrlDecode: (encoded: string) => any;
+/**
  * Generates a JWT token from the header, payload, and signature
  *
  * @param payload - data to include in the JWT payload

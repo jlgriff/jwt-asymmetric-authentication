@@ -68,22 +68,20 @@ const loadPrivateKey = async (): Promise<KeyObject> => {
 };
 
 /**
- * Encodes a payload via base64url
+ * Encodes a JSON object into a base64url-encoded string
  *
- * @param json - payload to base64url encode
- * @returns a base64url-encoded payload
+ * @param json - JSON object to encode
+ * @returns a base64url-encoded string
  */
-const base64UrlEncodeJSON = (
-  json: JwtHeader | JwtPayload,
-): string => Buffer.from(JSON.stringify(json)).toString('base64url');
+export const base64UrlEncode = (json: any): string => Buffer.from(JSON.stringify(json)).toString('base64url');
 
 /**
- * Decodes a base64url-encoded payload
+ * Decodes a base64url-encoded string into a JSON object
  *
- * @param encoded - base64url-encoded payload
- * @returns an unencrypted payload
+ * @param encoded - base64url-encoded string
+ * @returns a decoded JSON object
  */
-const base64UrlDecodeToJSON = (encoded: string): any => JSON.parse(
+export const base64UrlDecode = (encoded: string): any => JSON.parse(
   Buffer.from(encoded, 'base64url').toString('utf8'),
 );
 
@@ -116,8 +114,8 @@ export const generateToken = async (payload: JwtPayload) => {
   if (!privateKey) {
     privateKey = await loadPrivateKey();
   }
-  const encodedHeader = base64UrlEncodeJSON({ alg: 'RS256', typ: 'JWT' });
-  const encodedPayload = base64UrlEncodeJSON(payload);
+  const encodedHeader = base64UrlEncode({ alg: 'RS256', typ: 'JWT' });
+  const encodedPayload = base64UrlEncode(payload);
   const encodedSignature = generateSignature(encodedHeader, encodedPayload, privateKey);
   return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 };
@@ -138,8 +136,8 @@ export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> 
     return { authentic: false, inauthenticReason: 'JWT does not have a header, payload, and signature' };
   }
 
-  const header: JwtHeader = base64UrlDecodeToJSON(parts[0]);
-  const payload: JwtPayload = base64UrlDecodeToJSON(parts[1]);
+  const header: JwtHeader = base64UrlDecode(parts[0]);
+  const payload: JwtPayload = base64UrlDecode(parts[1]);
   if (header.alg !== 'RS256' || header.typ !== 'JWT') {
     return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
   }
