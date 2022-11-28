@@ -4,7 +4,7 @@ import crypto, {
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
+import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;
@@ -27,7 +27,7 @@ export const calculateTokenExpiration = (date: Date, minutesToAdd: number): Date
  *
  * @returns the current import's directory path
  */
-const getDirectory = (): string => path.dirname(fileURLToPath(import.meta.url));
+const getDirectory = (): string => path.dirname(fileURLToPath(__dirname));
 
 /**
  * Creates a public key from the bundled public certificate file

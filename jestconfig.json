@@ -4,6 +4,5 @@
   },
   "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
-  "roots": ["src/"],
-  "testTimeout": 10000
+  "roots": ["src/"]
 }

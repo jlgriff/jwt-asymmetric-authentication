@@ -21,7 +21,7 @@ export const calculateTokenExpiration = (date, minutesToAdd) => {
  *
  * @returns the current import's directory path
  */
-const getDirectory = () => path.dirname(fileURLToPath(import.meta.url));
+const getDirectory = () => path.dirname(fileURLToPath(__dirname));
 /**
  * Creates a public key from the bundled public certificate file
  *
