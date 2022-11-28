@@ -70,10 +70,10 @@ const loadPrivateKey = async (): Promise<KeyObject> => {
 /**
  * Encodes a JSON object into a base64url-encoded string
  *
- * @param object - JSON object to encode
+ * @param json - JSON object to encode
  * @returns a base64url-encoded string
  */
-export const base64UrlEncode = (object: any): string => Buffer.from(JSON.stringify(object)).toString('base64url');
+export const base64UrlEncode = (json: any): string => Buffer.from(JSON.stringify(json)).toString('base64url');
 
 /**
  * Decodes a base64url-encoded string into a JSON object

@@ -10,10 +10,10 @@ export declare const calculateTokenExpiration: (date: Date, minutesToAdd: number
 /**
  * Encodes a JSON object into a base64url-encoded string
  *
- * @param object - JSON object to encode
+ * @param json - JSON object to encode
  * @returns a base64url-encoded string
  */
-export declare const base64UrlEncode: (object: any) => string;
+export declare const base64UrlEncode: (json: any) => string;
 /**
  * Decodes a base64url-encoded string into a JSON object
  *
