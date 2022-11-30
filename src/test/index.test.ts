@@ -1,4 +1,4 @@
-import { base64UrlDecode, base64UrlEncode } from '../index';
+import { base64UrlDecode, base64UrlEncode } from '../index.js';
 
 process.env.NODE_ENV = 'test';
 process.env.KEY_PATH_PRIVATE = '/src/test/keys/test-key.private.pem';

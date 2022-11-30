@@ -4,7 +4,7 @@ import crypto, {
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication';
+import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;

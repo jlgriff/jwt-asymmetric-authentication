@@ -1,5 +1,5 @@
 export {
   generateToken, isTokenAuthentic, calculateTokenExpiration, base64UrlEncode, base64UrlDecode,
-} from './service/authenticator';
+} from './service/authenticator.js';
 
-export { JwtHeader, JwtPayload, JwtAuthenticity } from './interface/authentication';
+export { JwtHeader, JwtPayload, JwtAuthenticity } from './interface/authentication.js';

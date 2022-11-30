@@ -1,4 +1,4 @@
-import { JwtPayload, JwtAuthenticity } from '../interface/authentication';
+import { JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
 /**
  * Calculates an expiration date by incrementing the given date by a configured number of minutes
  *
