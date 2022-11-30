@@ -27,10 +27,9 @@
     "copy-test-keys": "cp -r src/test/keys dist/test",
     "test": "npm run build && jest --config jest.config.cjs"
   },
-  "dependencies": {
-    "@babel/preset-env": "^7.20.2"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@babel/preset-env": "^7.20.2",
     "@types/jest": "^29.2.3",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
