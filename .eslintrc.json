@@ -15,10 +15,9 @@
     "@typescript-eslint"
   ],
   "rules": {
-    "no-console": "off",
     "import/extensions": [
       2,
-      "never"
+      "always"
     ],
     "import/no-extraneous-dependencies": [
       "error",
