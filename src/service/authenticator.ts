@@ -27,7 +27,7 @@ export const calculateTokenExpiration = (date: Date, minutesToAdd: number): Date
  *
  * @returns the current import's directory path
  */
-const getDirectory = (): string => path.dirname(fileURLToPath(__dirname));
+const getDirectory = (): string => path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Creates a public key from the bundled public certificate file
@@ -44,7 +44,8 @@ const loadPublicKey = async (): Promise<KeyObject> => {
     const rsaKey = await fs.readFile(filepath, 'utf-8');
     return createPublicKey(rsaKey);
   } catch (e) {
-    throw new Error(`No public key file could be found at ${filepath}. Make sure that the KEY_PATH_PUBLIC .env config has been set and is pointed to the correct filepath.`);
+    throw new Error(`No public key file could be found at ${getDirectory()}${process.env.KEY_PATH_PUBLIC}. `
+      + 'Make sure that the KEY_PATH_PUBLIC .env config has been set and is pointed to the correct filepath.');
   }
 };
 
@@ -63,7 +64,8 @@ const loadPrivateKey = async (): Promise<KeyObject> => {
     const rsaKey = await fs.readFile(filepath, 'utf-8');
     return createPrivateKey(rsaKey);
   } catch (e) {
-    throw new Error(`No private key file could be found at ${filepath}. Make sure that the KEY_PATH_PRIVATE env config has been set and is pointed to the correct relative filepath.`);
+    throw new Error(`No private key file could be found at ${getDirectory()}${process.env.KEY_PATH_PUBLIC}. `
+      + 'Make sure that the KEY_PATH_PRIVATE env config has been set and is pointed to the correct relative filepath.');
   }
 };
 
