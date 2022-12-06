@@ -22,10 +22,15 @@ export const calculateTokenExpiration = (date: Date, minutesToAdd: number): Date
   return expires;
 };
 
-export function findProjectDirectory() {
+/**
+ * Finds the directory for the project
+ *
+ * @returns the project's directory
+ */
+const findProjectDirectory = () => {
   const filePath = findUpSync('package.json', {});
   return filePath && dirname(filePath);
-}
+};
 
 /**
  * Creates a public key from the bundled public certificate file
