@@ -1,9 +1,8 @@
-import crypto, {
-  createPrivateKey, createPublicKey, KeyObject, Verify,
+import {
+  createSign, createVerify, createPrivateKey, createPublicKey, KeyObject, Verify,
 } from 'crypto';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { resolve } from 'path';
+import { readFile } from 'fs/promises';
 import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
 
 let privateKey: KeyObject | undefined;
@@ -23,13 +22,6 @@ export const calculateTokenExpiration = (date: Date, minutesToAdd: number): Date
 };
 
 /**
- * Gets the current directory path
- *
- * @returns the current import's directory path
- */
-const getDirectory = (): string => path.dirname(fileURLToPath(import.meta.url));
-
-/**
  * Creates a public key from the bundled public certificate file
  *
  * @returns a public key object from the bundled public certificate file
@@ -40,11 +32,11 @@ const loadPublicKey = async (): Promise<KeyObject> => {
     throw new Error('No KEY_PATH_PUBLIC .env config has been set. Set it to the filepath of the public key.  e.g. \'/keys/public.pem\'');
   }
   try {
-    filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PUBLIC}`);
-    const rsaKey = await fs.readFile(filepath, 'utf-8');
+    filepath = resolve(`${process.env.KEY_PATH_PUBLIC}`);
+    const rsaKey = await readFile(filepath, 'utf-8');
     return createPublicKey(rsaKey);
   } catch (e) {
-    throw new Error(`No public key file could be found at ${getDirectory()}${process.env.KEY_PATH_PUBLIC}. `
+    throw new Error(`No public key file could be found at ${process.env.KEY_PATH_PUBLIC}. `
       + 'Make sure that the KEY_PATH_PUBLIC .env config has been set and is pointed to the correct filepath.');
   }
 };
@@ -60,11 +52,11 @@ const loadPrivateKey = async (): Promise<KeyObject> => {
     throw new Error('No KEY_PATH_PRIVATE .env config has been set. Set it to the filepath of the private key. e.g. \'/keys/private.pem\'');
   }
   try {
-    filepath = path.resolve(`${getDirectory()}${process.env.KEY_PATH_PRIVATE}`);
-    const rsaKey = await fs.readFile(filepath, 'utf-8');
+    filepath = resolve(`${process.env.KEY_PATH_PRIVATE}`);
+    const rsaKey = await readFile(filepath, 'utf-8');
     return createPrivateKey(rsaKey);
   } catch (e) {
-    throw new Error(`No private key file could be found at ${getDirectory()}${process.env.KEY_PATH_PUBLIC}. `
+    throw new Error(`No private key file could be found at ${process.env.KEY_PATH_PUBLIC}. `
       + 'Make sure that the KEY_PATH_PRIVATE env config has been set and is pointed to the correct relative filepath.');
   }
 };
@@ -101,7 +93,7 @@ const generateSignature = (
   privKey: KeyObject,
 ): string => {
   const str = `${encodedHeader}.${encodedPayload}`;
-  const sign = crypto.createSign('RSA-SHA256');
+  const sign = createSign('RSA-SHA256');
   sign.update(str);
   return sign.sign(privKey, 'base64url');
 };
@@ -148,7 +140,7 @@ export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> 
   const { expires } = payload;
   if (expires && expires < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
 
-  const verify: Verify = crypto.createVerify('RSA-SHA256');
+  const verify: Verify = createVerify('RSA-SHA256');
   verify.update(`${parts[0]}.${parts[1]}`);
 
   const isAuthentic: boolean = verify.verify(publicKey, signature, 'base64url');

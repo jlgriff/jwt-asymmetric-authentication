@@ -13,3 +13,4 @@ export interface JwtAuthenticity {
     authentic: boolean;
     inauthenticReason?: string;
 }
+//# sourceMappingURL=authentication.d.ts.map

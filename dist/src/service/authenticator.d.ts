@@ -35,3 +35,4 @@ export declare const generateToken: (payload: JwtPayload) => Promise<string>;
  * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
  */
 export declare const isTokenAuthentic: (token: string) => Promise<JwtAuthenticity>;
+//# sourceMappingURL=authenticator.d.ts.map
