@@ -7,6 +7,7 @@ import { JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
  * @returns a date later than the given date
  */
 export declare const calculateTokenExpiration: (date: Date, minutesToAdd: number) => Date;
+export declare function findProjectDirectory(): string | undefined;
 /**
  * Encodes a JSON object into a base64url-encoded string
  *
@@ -35,3 +36,4 @@ export declare const generateToken: (payload: JwtPayload) => Promise<string>;
  * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
  */
 export declare const isTokenAuthentic: (token: string) => Promise<JwtAuthenticity>;
+//# sourceMappingURL=authenticator.d.ts.map
