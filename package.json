@@ -26,16 +26,20 @@
   },
   "typesVersions": {
     "*": {
-      "index.d.ts": ["dist/src/index.d.ts"]
+      "index.d.ts": [
+        "dist/src/index.d.ts"
+      ]
     }
   },
   "type": "module",
   "scripts": {
     "build": "npx tsc && npm run copy-test-keys",
     "copy-test-keys": "cp -r ts/test/keys dist/test/keys",
-    "test": "npx mocha dist/test/*.js"
+    "test": "npm run build && npx mocha dist/test/*.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "find-up": "^6.3.0"
+  },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.9",

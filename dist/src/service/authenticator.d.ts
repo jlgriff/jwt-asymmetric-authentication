@@ -7,6 +7,7 @@ import { JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
  * @returns a date later than the given date
  */
 export declare const calculateTokenExpiration: (date: Date, minutesToAdd: number) => Date;
+export declare function findProjectDirectory(): string | undefined;
 /**
  * Encodes a JSON object into a base64url-encoded string
  *
