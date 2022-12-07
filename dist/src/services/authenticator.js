@@ -153,7 +153,8 @@ export const isTokenAuthentic = async (token) => {
     if (!publicKey) {
         publicKey = await loadPublicKey();
     }
-    const { header, payload, signature } = parseToken(token);
+    const strippedToken = token.replace('Bearer ', '');
+    const { header, payload, signature } = parseToken(strippedToken);
     if (header.alg !== 'RS256' || header.typ !== 'JWT') {
         return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
     }
@@ -165,7 +166,7 @@ export const isTokenAuthentic = async (token) => {
         return { authentic: false, inauthenticReason: `JWT cannot be before ${nbf}` };
     }
     const verify = createVerify('RSA-SHA256');
-    const parts = token.split('.');
+    const parts = strippedToken.split('.');
     verify.update(`${parts[0]}.${parts[1]}`);
     const isAuthentic = verify.verify(publicKey, signature, 'base64url');
     const inauthenticReason = isAuthentic ? undefined : 'JWT failed to authenticate against the public key';
