@@ -181,8 +181,9 @@ export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> 
     return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
   }
 
-  const { exp } = payload;
+  const { exp, nbf } = payload;
   if (exp && exp < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
+  if (nbf && nbf > new Date()) { return { authentic: false, inauthenticReason: `JWT cannot be before ${nbf}` }; }
 
   const verify: Verify = createVerify('RSA-SHA256');
   const parts: string[] = token.split('.');
