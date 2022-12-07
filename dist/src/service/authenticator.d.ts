@@ -1,4 +1,4 @@
-import { JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
+import { JwtPayload, JwtAuthenticity, JwtParsed } from '../interface/authentication.js';
 /**
  * Calculates an expiration date by incrementing the given date by a configured number of minutes
  *
@@ -20,19 +20,25 @@ export declare const base64UrlEncode: (json: any) => string;
  * @param encoded - base64url-encoded string
  * @returns a decoded JSON object
  */
-export declare const base64UrlDecode: (encoded: string) => any;
+export declare const base64UrlDecode: (encoded: string) => unknown;
 /**
- * Generates a JWT token from the header, payload, and signature
+ * Parses a JWT payload
+ *
+ * @param token - the JWT to be parsed
+ */
+export declare const parseToken: (token: string) => JwtParsed;
+/**
+ * Generates a JWT from the header, payload, and signature
  *
  * @param payload - data to include in the JWT payload
- * @returns a JWT token
+ * @returns a JWT
  */
 export declare const generateToken: (payload: JwtPayload) => Promise<string>;
 /**
- * Determines whether a JWT token can be validated and authenticated or not
+ * Determines whether a JWT can be validated and authenticated or not
  *
- * @param token - JWT token
- * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
+ * @param token - JWT
+ * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
 export declare const isTokenAuthentic: (token: string) => Promise<JwtAuthenticity>;
 //# sourceMappingURL=authenticator.d.ts.map

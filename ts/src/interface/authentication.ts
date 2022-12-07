@@ -11,6 +11,12 @@ export interface JwtPayload {
   expires: Date;
 }
 
+export interface JwtParsed {
+  header: JwtHeader;
+  payload: JwtPayload;
+  signature: string;
+}
+
 export interface JwtAuthenticity {
   authentic: boolean;
   inauthenticReason?: string;

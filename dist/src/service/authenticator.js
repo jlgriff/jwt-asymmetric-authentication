@@ -80,6 +80,41 @@ export const base64UrlEncode = (json) => Buffer.from(JSON.stringify(json)).toStr
  */
 export const base64UrlDecode = (encoded) => JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
 /**
+ * Parses a JWT payload
+ *
+ * @param token - the JWT to be parsed
+ */
+export const parseToken = (token) => {
+    const parts = token.split('.');
+    if (parts.length < 3) {
+        throw new Error('JWT is invalid', { cause: 'JWT does not have a header, payload, and signature' });
+    }
+    const header = base64UrlDecode(parts[0]);
+    const payload = base64UrlDecode(parts[1]);
+    if (header !== null && typeof header === 'object' && payload !== null && typeof payload === 'object') {
+        const headerObj = header;
+        const payloadObj = payload;
+        if (!('alg' in headerObj)) {
+            throw new Error('JWT header is missing an \'alg\' property');
+        }
+        if (!('typ' in headerObj)) {
+            throw new Error('JWT header is missing a \'typ\' property');
+        }
+        if (!('issued' in payloadObj)) {
+            throw new Error('JWT payload is missing an \'issued\' property');
+        }
+        if (!('expires' in payloadObj)) {
+            throw new Error('JWT payload is missing an \'expires\' property');
+        }
+        return {
+            header: headerObj,
+            payload: { ...payloadObj, issued: new Date(payloadObj.issued), expires: new Date(payloadObj.expires) },
+            signature: parts[2],
+        };
+    }
+    throw new Error('JWT could not be parsed', { cause: `The following JWT could not be parsed into an object: ${token}` });
+};
+/**
  * Generates a JWT signature from the header, payload, and private key
  *
  * @param encodedHeader - base64url-encoded JWT header
@@ -94,10 +129,10 @@ const generateSignature = (encodedHeader, encodedPayload, privKey) => {
     return sign.sign(privKey, 'base64url');
 };
 /**
- * Generates a JWT token from the header, payload, and signature
+ * Generates a JWT from the header, payload, and signature
  *
  * @param payload - data to include in the JWT payload
- * @returns a JWT token
+ * @returns a JWT
  */
 export const generateToken = async (payload) => {
     if (!privateKey) {
@@ -109,30 +144,25 @@ export const generateToken = async (payload) => {
     return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 };
 /**
- * Determines whether a JWT token can be validated and authenticated or not
+ * Determines whether a JWT can be validated and authenticated or not
  *
- * @param token - JWT token
- * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
+ * @param token - JWT
+ * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
 export const isTokenAuthentic = async (token) => {
     if (!publicKey) {
         publicKey = await loadPublicKey();
     }
-    const parts = token.split('.');
-    if (parts.length < 3) {
-        return { authentic: false, inauthenticReason: 'JWT does not have a header, payload, and signature' };
-    }
-    const header = base64UrlDecode(parts[0]);
-    const payload = base64UrlDecode(parts[1]);
+    const { header, payload, signature } = parseToken(token);
     if (header.alg !== 'RS256' || header.typ !== 'JWT') {
         return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
     }
-    const signature = parts[2];
     const { expires } = payload;
     if (expires && expires < new Date()) {
         return { authentic: false, inauthenticReason: 'JWT is expired' };
     }
     const verify = createVerify('RSA-SHA256');
+    const parts = token.split('.');
     verify.update(`${parts[0]}.${parts[1]}`);
     const isAuthentic = verify.verify(publicKey, signature, 'base64url');
     const inauthenticReason = isAuthentic ? undefined : 'JWT failed to authenticate against the public key';

@@ -4,7 +4,9 @@ import {
 import { resolve, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import { findUpSync } from 'find-up';
-import { JwtHeader, JwtPayload, JwtAuthenticity } from '../interface/authentication.js';
+import {
+  JwtPayload, JwtAuthenticity, JwtParsed,
+} from '../interface/authentication.js';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;
@@ -86,9 +88,45 @@ export const base64UrlEncode = (json: any): string => Buffer.from(JSON.stringify
  * @param encoded - base64url-encoded string
  * @returns a decoded JSON object
  */
-export const base64UrlDecode = (encoded: string): any => JSON.parse(
+export const base64UrlDecode = (encoded: string): unknown => JSON.parse(
   Buffer.from(encoded, 'base64url').toString('utf8'),
 );
+
+/**
+ * Parses a JWT payload
+ *
+ * @param token - the JWT to be parsed
+ */
+export const parseToken = (token: string): JwtParsed => {
+  const parts: string[] = token.split('.');
+  if (parts.length < 3) { throw new Error('JWT is invalid', { cause: 'JWT does not have a header, payload, and signature' }); }
+
+  const header = base64UrlDecode(parts[0]);
+  const payload = base64UrlDecode(parts[1]);
+
+  if (header !== null && typeof header === 'object' && payload !== null && typeof payload === 'object') {
+    const headerObj: any = header;
+    const payloadObj: any = payload;
+    if (!('alg' in headerObj)) {
+      throw new Error('JWT header is missing an \'alg\' property');
+    }
+    if (!('typ' in headerObj)) {
+      throw new Error('JWT header is missing a \'typ\' property');
+    }
+    if (!('issued' in payloadObj)) {
+      throw new Error('JWT payload is missing an \'issued\' property');
+    }
+    if (!('expires' in payloadObj)) {
+      throw new Error('JWT payload is missing an \'expires\' property');
+    }
+    return {
+      header: headerObj,
+      payload: { ...payloadObj, issued: new Date(payloadObj.issued), expires: new Date(payloadObj.expires) },
+      signature: parts[2],
+    };
+  }
+  throw new Error('JWT could not be parsed', { cause: `The following JWT could not be parsed into an object: ${token}` });
+};
 
 /**
  * Generates a JWT signature from the header, payload, and private key
@@ -110,10 +148,10 @@ const generateSignature = (
 };
 
 /**
- * Generates a JWT token from the header, payload, and signature
+ * Generates a JWT from the header, payload, and signature
  *
  * @param payload - data to include in the JWT payload
- * @returns a JWT token
+ * @returns a JWT
  */
 export const generateToken = async (payload: JwtPayload) => {
   if (!privateKey) {
@@ -126,32 +164,26 @@ export const generateToken = async (payload: JwtPayload) => {
 };
 
 /**
- * Determines whether a JWT token can be validated and authenticated or not
+ * Determines whether a JWT can be validated and authenticated or not
  *
- * @param token - JWT token
- * @returns whether the JWT token can be authenticated and, if not, the reason why it cannot
+ * @param token - JWT
+ * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
 export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> => {
   if (!publicKey) {
     publicKey = await loadPublicKey();
   }
 
-  const parts: string[] = token.split('.');
-  if (parts.length < 3) {
-    return { authentic: false, inauthenticReason: 'JWT does not have a header, payload, and signature' };
-  }
-
-  const header: JwtHeader = base64UrlDecode(parts[0]);
-  const payload: JwtPayload = base64UrlDecode(parts[1]);
+  const { header, payload, signature } = parseToken(token);
   if (header.alg !== 'RS256' || header.typ !== 'JWT') {
     return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
   }
 
-  const signature = parts[2];
   const { expires } = payload;
   if (expires && expires < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
 
   const verify: Verify = createVerify('RSA-SHA256');
+  const parts: string[] = token.split('.');
   verify.update(`${parts[0]}.${parts[1]}`);
 
   const isAuthentic: boolean = verify.verify(publicKey, signature, 'base64url');
