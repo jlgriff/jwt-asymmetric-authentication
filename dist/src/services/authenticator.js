@@ -157,9 +157,12 @@ export const isTokenAuthentic = async (token) => {
     if (header.alg !== 'RS256' || header.typ !== 'JWT') {
         return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
     }
-    const { exp } = payload;
+    const { exp, nbf } = payload;
     if (exp && exp < new Date()) {
         return { authentic: false, inauthenticReason: 'JWT is expired' };
+    }
+    if (nbf && nbf > new Date()) {
+        return { authentic: false, inauthenticReason: `JWT cannot be before ${nbf}` };
     }
     const verify = createVerify('RSA-SHA256');
     const parts = token.split('.');
