@@ -5,8 +5,8 @@ import { resolve, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import { findUpSync } from 'find-up';
 import {
-  JwtPayload, JwtAuthenticity, JwtParsed,
-} from '../interface/authentication.js';
+  JwtPayload, JwtAuthenticity, JwtParsed, JWT_DATE_CLAIM_NAMES,
+} from '../constants/authentication-constants.js';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;
@@ -107,21 +107,23 @@ export const parseToken = (token: string): JwtParsed => {
   if (header !== null && typeof header === 'object' && payload !== null && typeof payload === 'object') {
     const headerObj: any = header;
     const payloadObj: any = payload;
+
     if (!('alg' in headerObj)) {
       throw new Error('JWT header is missing an \'alg\' property');
     }
     if (!('typ' in headerObj)) {
       throw new Error('JWT header is missing a \'typ\' property');
     }
-    if (!('issued' in payloadObj)) {
-      throw new Error('JWT payload is missing an \'issued\' property');
-    }
-    if (!('expires' in payloadObj)) {
-      throw new Error('JWT payload is missing an \'expires\' property');
-    }
+
+    JWT_DATE_CLAIM_NAMES.forEach((name) => {
+      if (name in payloadObj) {
+        payloadObj[name] = new Date(payloadObj[name]);
+      }
+    });
+
     return {
       header: headerObj,
-      payload: { ...payloadObj, issued: new Date(payloadObj.issued), expires: new Date(payloadObj.expires) },
+      payload: payloadObj,
       signature: parts[2],
     };
   }
@@ -179,8 +181,8 @@ export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> 
     return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
   }
 
-  const { expires } = payload;
-  if (expires && expires < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
+  const { exp } = payload;
+  if (exp && exp < new Date()) { return { authentic: false, inauthenticReason: 'JWT is expired' }; }
 
   const verify: Verify = createVerify('RSA-SHA256');
   const parts: string[] = token.split('.');

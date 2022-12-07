@@ -2,6 +2,7 @@ import { createSign, createVerify, createPrivateKey, createPublicKey, } from 'cr
 import { resolve, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import { findUpSync } from 'find-up';
+import { JWT_DATE_CLAIM_NAMES, } from '../constants/authentication-constants.js';
 let privateKey;
 let publicKey;
 /**
@@ -100,15 +101,14 @@ export const parseToken = (token) => {
         if (!('typ' in headerObj)) {
             throw new Error('JWT header is missing a \'typ\' property');
         }
-        if (!('issued' in payloadObj)) {
-            throw new Error('JWT payload is missing an \'issued\' property');
-        }
-        if (!('expires' in payloadObj)) {
-            throw new Error('JWT payload is missing an \'expires\' property');
-        }
+        JWT_DATE_CLAIM_NAMES.forEach((name) => {
+            if (name in payloadObj) {
+                payloadObj[name] = new Date(payloadObj[name]);
+            }
+        });
         return {
             header: headerObj,
-            payload: { ...payloadObj, issued: new Date(payloadObj.issued), expires: new Date(payloadObj.expires) },
+            payload: payloadObj,
             signature: parts[2],
         };
     }
@@ -157,8 +157,8 @@ export const isTokenAuthentic = async (token) => {
     if (header.alg !== 'RS256' || header.typ !== 'JWT') {
         return { authentic: false, inauthenticReason: 'JWT header is incorrect' };
     }
-    const { expires } = payload;
-    if (expires && expires < new Date()) {
+    const { exp } = payload;
+    if (exp && exp < new Date()) {
         return { authentic: false, inauthenticReason: 'JWT is expired' };
     }
     const verify = createVerify('RSA-SHA256');

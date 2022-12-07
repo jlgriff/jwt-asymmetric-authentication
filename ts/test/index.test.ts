@@ -23,31 +23,31 @@ test('An object will have the same value after being encoded and decoded', () =>
 });
 
 test('A token can be generated if a private key file is available in the configured directory', async () => {
-  const issued: Date = new Date();
-  const expires = calculateTokenExpiration(issued, 60);
+  const iat: Date = new Date();
+  const exp = calculateTokenExpiration(iat, 60);
 
-  const payload = { issued, expires };
+  const payload = { iat, exp };
   const token = await generateToken(payload);
   assert.notEqual(token.length, 0);
 });
 
 test('A token can be authenticated if a public key file is available in the configured directory', async () => {
-  const token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3N1ZWQiOiIyMDIyLTEyLTA3VDAyOjU4OjU1LjQxNloiLCJleHBpcmVzIjoiMjAyMi0xMi0wN1QwMzo1ODo1NS40MTZaIn0.cWH4j55xNzzDP-Hfb9uXpsXDGMIY_3xO2MU-R7auv9jOdbdnzt3_vWWAjbwRGINqy-2UbV-C4SN6RgPPir3XVu6uNxHE52aDSS-Ge4xIwdaxqTURcQ-xrKfdJIjMBDNWjO_3iEs_gpEnUI97zgZsUPLrNZLGQdlYj8xuLR0wqfOxQ2FuYCubLXNe37aR4rIvYzz-03DdDdLBQGfgss_-ncMtqy1yb5us-l2wBo7fERGiG4fkPEaSZzmW_UyBQUqqKst1MN-FmJPZJ5fVv6n9LBkASw8-aS-aCfkikkerQYwi3cLUii0oN7lnERfPLHMFrR3p-tCKGFfO47kiZVmC9A';
+  const token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOiIyMDIyLTEyLTA3VDAzOjQwOjMwLjY2OVoiLCJleHAiOiIyMDIyLTEyLTA3VDA0OjQwOjMwLjY2OVoifQ.bgbKfa672DoNoalJBnxXZ8f0tP589inDfRoqOfgPLyLXA7tLokMR3l_xsjN58ISo6cqOfeGTWu-AYdc_VjtytdlirL25pHcQDUGt4v92vxpdr4jjE0p_0pCoaPEuYwlBtBqnlZ8mDaKrI-mvs5MfGEBNTJa7vuZDuBCs7m22vQiBriwjl7gkU9R7dMYz-GTGSKwfxS2zp_-8dnlTjNt_li_0U2tyb9eorlOor1AFgKLRtwBWHQmcowBXCEey-5ZtWFtG491hae3Eegmu7Qm6OdE9KuiWfGaR3-ICEs8FcWDjeLJMRgVP9E0KW9iVZqdcqa4am0svdgwPfcDzL8-2Kw';
   const authenticity = await isTokenAuthentic(token);
   assert.equal(authenticity.authentic, true);
 });
 
 test('A generated token is parseable', async () => {
-  const issued: Date = new Date();
-  const expires = calculateTokenExpiration(issued, 60);
+  const iat: Date = new Date();
+  const exp = calculateTokenExpiration(iat, 60);
 
-  const object: JwtPayload = { issued, expires, data: { property: 'value' } };
+  const object: JwtPayload = { iat, exp, data: { property: 'value' } };
   const token = await generateToken(object);
   const { header, payload, signature } = parseToken(token);
 
   assert.equal(header.alg, 'RS256');
   assert.equal(header.typ, 'JWT');
-  assert.deepEqual(payload.issued, issued);
-  assert.deepEqual(payload.expires, expires);
+  assert.deepEqual(payload.iat, iat);
+  assert.deepEqual(payload.exp, exp);
   assert.notEqual(signature.length, 0);
 });
