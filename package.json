@@ -35,7 +35,7 @@
   "scripts": {
     "build": "npx tsc && npm run copy-test-keys",
     "copy-test-keys": "cp -r ts/test/keys dist/test/keys",
-    "test": "npm run build && npx mocha dist/test/*.js"
+    "test": "npm run build && npx mocha 'dist/test/**/*.js'"
   },
   "dependencies": {
     "find-up": "^6.3.0"

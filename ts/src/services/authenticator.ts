@@ -98,7 +98,8 @@ export const base64UrlDecode = (encoded: string): unknown => JSON.parse(
  * @param token - the JWT to be parsed
  */
 export const parseToken = (token: string): JwtParsed => {
-  const parts: string[] = token.split('.');
+  const strippedToken = token.replace('Bearer ', '');
+  const parts: string[] = strippedToken.split('.');
   if (parts.length < 3) { throw new Error('JWT is invalid', { cause: 'JWT does not have a header, payload, and signature' }); }
 
   const header = base64UrlDecode(parts[0]);
