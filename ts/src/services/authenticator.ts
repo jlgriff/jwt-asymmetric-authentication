@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises';
 import { findUpSync } from 'find-up';
 import {
   JwtPayload, JwtAuthenticity, JwtParsed, JWT_DATE_CLAIM_NAMES,
-} from '../constants/authentication-constants.js';
+} from '../constants/constants.js';
 
 let privateKey: KeyObject | undefined;
 let publicKey: KeyObject | undefined;

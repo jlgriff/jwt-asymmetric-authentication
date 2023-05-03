@@ -2,7 +2,7 @@ import { createSign, createVerify, createPrivateKey, createPublicKey, } from 'cr
 import { resolve, dirname } from 'path';
 import { readFile } from 'fs/promises';
 import { findUpSync } from 'find-up';
-import { JWT_DATE_CLAIM_NAMES, } from '../constants/authentication-constants.js';
+import { JWT_DATE_CLAIM_NAMES, } from '../constants/constants.js';
 let privateKey;
 let publicKey;
 /**
