@@ -35,10 +35,18 @@ export declare const parseToken: (token: string) => JwtParsed;
  */
 export declare const generateToken: (payload: JwtPayload) => Promise<string>;
 /**
- * Determines whether a JWT can be validated and authenticated or not
+ * Determines whether or not a JWT can be validated and authenticated
  *
  * @param token - JWT
  * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
 export declare const isTokenAuthentic: (token: string) => Promise<JwtAuthenticity>;
+/**
+ * Determines whether or not a JWT is expired
+ *
+ * @param payload JWT parsed payload
+ * @param dateToCheck Optional date to check if after the token's expiration (if not present, token expiration will be checked as of now)
+ * @returns Whether or not a JWT is expired
+ */
+export declare const isTokenExpired: (payload: JwtPayload, dateToCheck?: Date) => boolean;
 //# sourceMappingURL=authenticator.d.ts.map

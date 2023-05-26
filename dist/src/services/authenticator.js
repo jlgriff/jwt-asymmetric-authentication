@@ -145,7 +145,7 @@ export const generateToken = async (payload) => {
     return `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
 };
 /**
- * Determines whether a JWT can be validated and authenticated or not
+ * Determines whether or not a JWT can be validated and authenticated
  *
  * @param token - JWT
  * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
@@ -172,5 +172,21 @@ export const isTokenAuthentic = async (token) => {
     const isAuthentic = verify.verify(publicKey, signature, 'base64url');
     const inauthenticReason = isAuthentic ? undefined : 'JWT failed to authenticate against the public key';
     return { authentic: isAuthentic, inauthenticReason };
+};
+/**
+ * Determines whether or not a JWT is expired
+ *
+ * @param payload JWT parsed payload
+ * @param dateToCheck Optional date to check if after the token's expiration (if not present, token expiration will be checked as of now)
+ * @returns Whether or not a JWT is expired
+ */
+export const isTokenExpired = (payload, dateToCheck) => {
+    if (!payload.iat) {
+        return false;
+    }
+    if (dateToCheck) {
+        return dateToCheck > payload.iat;
+    }
+    return new Date() > payload.iat;
 };
 //# sourceMappingURL=authenticator.js.map

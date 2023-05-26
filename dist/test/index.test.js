@@ -2,6 +2,7 @@
 import * as assert from 'assert/strict';
 import { test } from 'mocha';
 import { base64UrlDecode, base64UrlEncode, generateToken, isTokenAuthentic, parseToken, } from '../src/index.js';
+import { isTokenExpired } from '../src/services/authenticator.js';
 process.env.NODE_ENV = 'test';
 process.env.KEY_PATH_PRIVATE = '/dist/test/keys/test-key.private.pem';
 process.env.KEY_PATH_PUBLIC = '/dist/test/keys/test-key.public.pem';
@@ -42,6 +43,18 @@ describe('Test the isTokenAuthentic function', () => {
         const bearerToken = `Bearer ${TEST_TOKEN}`;
         const authenticity = await isTokenAuthentic(bearerToken);
         assert.equal(authenticity.authentic, true);
+    });
+});
+describe('Test the isTokenExpired function', () => {
+    test('A token is not expired if it\'s expiration is after the given date', async () => {
+        const { payload } = parseToken(TEST_TOKEN);
+        const beforeExp = isTokenExpired(payload, new Date('2000-01-01'));
+        assert.equal(beforeExp, false);
+    });
+    test('A token is expired if it\'s expiration is before the given date', async () => {
+        const { payload } = parseToken(TEST_TOKEN);
+        const afterExp = isTokenExpired(payload, new Date('3000-01-01'));
+        assert.equal(afterExp, true);
     });
 });
 //# sourceMappingURL=index.test.js.map
