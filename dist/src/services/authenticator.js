@@ -181,12 +181,12 @@ export const isTokenAuthentic = async (token) => {
  * @returns Whether or not a JWT is expired
  */
 export const isTokenExpired = (payload, dateToCheck) => {
-    if (!payload.iat) {
+    if (!payload.exp) {
         return false;
     }
     if (dateToCheck) {
-        return dateToCheck > payload.iat;
+        return dateToCheck > payload.exp;
     }
-    return new Date() > payload.iat;
+    return new Date() > payload.exp;
 };
 //# sourceMappingURL=authenticator.js.map
