@@ -6,7 +6,7 @@ import { isTokenExpired } from '../src/services/authenticator.js';
 process.env.NODE_ENV = 'test';
 process.env.KEY_PATH_PRIVATE = '/dist/test/keys/test-key.private.pem';
 process.env.KEY_PATH_PUBLIC = '/dist/test/keys/test-key.public.pem';
-const TEST_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoiMjAyMi0xMi0wN1QwNTowNTo1My43ODdaIn0.Gn4tWLFn4buWc1fMPuUWf5kCJz77RJN7DDs8Kwc-GCbE6KE2vhr_Dv9_dnmMLeAzrRcF8zw7LHSC6yBEZquuf2grNdsPED8YMFooWSIZcq3G8fbRfgVCqcjUF0aENRqMVy3OfMXc-tflrdAL78X_2AFVk1W0TctMHSt0gw29DIEq435tQOZfndzL_cc-7PFP8Dyb0eK_KnGg26cCEqLRmq1WogFrlr2xE_jpk5XvsPtHPQnLTX_4QT7aUzvI8kgzjOoEfAS3uVDPzT3N9cSDft7rIxLxM5FmkkQClpMbsf0ng7GADFL7ZQk2PpAjtzDwkT-0D3a_trXaZMERtE6fcA';
+const TEST_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoiMjAyMy0wNS0yNlQxODowNzozNi44NTdaIiwiZXhwIjoiMjAyMy0wNS0yNlQxOTowNzozNi44NTdaIn0.Lnzb6lCN9LGed7HtS2SuADmpAc0FaYxa_KKFtQT5RqyGQtmLuGuJvG9k6ekHtKW175YgvJLdSRkzKqjehlcS4SSrTMEwXIbpRKREKFd07SwyCGj7pIZXlQaaO8bS1f4wHq0StiyJztFRJAujUZLeU_dKntRSDLOW5GjmieyJ3RgMaylyygePvbNYLK62WG4AKZNTHUqTgAFINmSBntd4gta406AIdkASor_7AjU9m3proFDWI3DMe-WUucDmSFKcuUpxvs12ohRpj-GPPKCwdCmhUl-5IZMXOMsuxbppH31QBX3tepSWgj2Lgr6-Fawe5Ee68QIz70gw7FdWXNLoyQ';
 test('An object will have the same value after being encoded and decoded', () => {
     const object = {
         name: 'name',
@@ -28,7 +28,9 @@ describe('Test the parseToken function', () => {
 });
 describe('Test the generateToken function', () => {
     test('A token can be generated if a private key file is available in the configured directory', async () => {
-        const payload = { sub: 'test', iat: new Date() };
+        const now = new Date();
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+        const payload = { sub: 'test', iat: now, exp: oneHourFromNow };
         const token = await generateToken(payload);
         assert.notEqual(token.length, 0);
     });
