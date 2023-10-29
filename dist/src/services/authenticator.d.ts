@@ -33,14 +33,14 @@ export declare const parseToken: (token: string) => JwtParsed;
  * @param payload - data to include in the JWT payload
  * @returns a JWT
  */
-export declare const generateToken: (payload: JwtPayload) => Promise<string>;
+export declare const generateToken: (payload: JwtPayload) => string;
 /**
  * Determines whether or not a JWT can be validated and authenticated
  *
  * @param token - JWT
  * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
-export declare const isTokenAuthentic: (token: string) => Promise<JwtAuthenticity>;
+export declare const isTokenAuthentic: (token: string) => JwtAuthenticity;
 /**
  * Determines whether or not a JWT is expired
  *

@@ -2,7 +2,7 @@ import {
   createSign, createVerify, createPrivateKey, createPublicKey, KeyObject, Verify,
 } from 'crypto';
 import { resolve, dirname } from 'path';
-import { readFile } from 'fs/promises';
+import { readFileSync } from 'fs';
 import { findUpSync } from 'find-up';
 import {
   JwtPayload, JwtAuthenticity, JwtParsed, JWT_DATE_CLAIM_NAMES,
@@ -39,14 +39,14 @@ const findProjectDirectory = () => {
  *
  * @returns a public key object from the bundled public certificate file
  */
-const loadPublicKey = async (): Promise<KeyObject> => {
+const loadPublicKey = (): KeyObject => {
   let filepath;
   if (!process.env.KEY_PATH_PUBLIC) {
     throw new Error('No KEY_PATH_PUBLIC .env config has been set. Set it to the filepath of the public key.  e.g. \'/keys/public.pem\'');
   }
   try {
     filepath = resolve(`${findProjectDirectory()}${process.env.KEY_PATH_PUBLIC}`);
-    const rsaKey = await readFile(filepath, 'utf-8');
+    const rsaKey = readFileSync(filepath, 'utf-8');
     return createPublicKey(rsaKey);
   } catch (e) {
     throw new Error(`No public key file could be found at ${findProjectDirectory()}${process.env.KEY_PATH_PUBLIC}. `
@@ -59,14 +59,14 @@ const loadPublicKey = async (): Promise<KeyObject> => {
  *
  * @returns a private key object from the bundled public certificate file
  */
-const loadPrivateKey = async (): Promise<KeyObject> => {
+const loadPrivateKey = (): KeyObject => {
   let filepath;
   if (!process.env.KEY_PATH_PRIVATE) {
     throw new Error('No KEY_PATH_PRIVATE .env config has been set. Set it to the filepath of the private key. e.g. \'/keys/private.pem\'');
   }
   try {
     filepath = resolve(`${findProjectDirectory()}${process.env.KEY_PATH_PRIVATE}`);
-    const rsaKey = await readFile(filepath, 'utf-8');
+    const rsaKey = readFileSync(filepath, 'utf-8');
     return createPrivateKey(rsaKey);
   } catch (e) {
     throw new Error(`No private key file could be found at ${findProjectDirectory()}${process.env.KEY_PATH_PUBLIC}. `
@@ -156,9 +156,9 @@ const generateSignature = (
  * @param payload - data to include in the JWT payload
  * @returns a JWT
  */
-export const generateToken = async (payload: JwtPayload) => {
+export const generateToken = (payload: JwtPayload) => {
   if (!privateKey) {
-    privateKey = await loadPrivateKey();
+    privateKey = loadPrivateKey();
   }
   const encodedHeader = base64UrlEncode({ alg: 'RS256', typ: 'JWT' });
   const encodedPayload = base64UrlEncode(payload);
@@ -172,9 +172,9 @@ export const generateToken = async (payload: JwtPayload) => {
  * @param token - JWT
  * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
  */
-export const isTokenAuthentic = async (token: string): Promise<JwtAuthenticity> => {
+export const isTokenAuthentic = (token: string): JwtAuthenticity => {
   if (!publicKey) {
-    publicKey = await loadPublicKey();
+    publicKey = loadPublicKey();
   }
 
   const strippedToken = token.replace('Bearer ', '');
