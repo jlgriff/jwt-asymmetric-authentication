@@ -106,7 +106,7 @@ export const parseToken = (token: string): JwtParsed => {
   // Parse JWT header
   let headerObj: { [key: string]: any; } = {};
   try {
-    const header = base64UrlDecode(parts[0]);
+    const header = parts[0].length > 0 && base64UrlDecode(parts[0]);
 
     if (header && typeof header === 'object') {
       headerObj = header;
@@ -116,7 +116,7 @@ export const parseToken = (token: string): JwtParsed => {
   // Parse JWT payload
   let payloadObj: { [key: string]: any; } = {};
   try {
-    const payload = base64UrlDecode(parts[1]);
+    const payload = parts[1].length > 0 && base64UrlDecode(parts[1]);
 
     if (payload && typeof payload === 'object') {
       payloadObj = payload;

@@ -95,7 +95,7 @@ export const parseToken = (token) => {
     // Parse JWT header
     let headerObj = {};
     try {
-        const header = base64UrlDecode(parts[0]);
+        const header = parts[0].length > 0 && base64UrlDecode(parts[0]);
         if (header && typeof header === 'object') {
             headerObj = header;
         }
@@ -104,7 +104,7 @@ export const parseToken = (token) => {
     // Parse JWT payload
     let payloadObj = {};
     try {
-        const payload = base64UrlDecode(parts[1]);
+        const payload = parts[1].length > 0 && base64UrlDecode(parts[1]);
         if (payload && typeof payload === 'object') {
             payloadObj = payload;
             JWT_DATE_CLAIM_NAMES.forEach((name) => {
