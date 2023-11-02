@@ -29,6 +29,13 @@ describe('Test the parseToken function', () => {
         assert.deepEqual(payload.iat instanceof Date, true);
         assert.notEqual(signature.length, 0);
     });
+    test('A 3-part token without content will not break the parser', async () => {
+        const emptyToken = '..';
+        const { header, payload, signature } = parseToken(emptyToken);
+        assert.deepEqual(header, {});
+        assert.deepEqual(payload, {});
+        assert.equal(signature, '');
+    });
 });
 describe('Test the generateToken function', () => {
     test('A token can be generated if a private key file is available in the configured directory', async () => {

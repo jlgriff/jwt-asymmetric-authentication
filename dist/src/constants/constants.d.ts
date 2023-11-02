@@ -5,13 +5,13 @@ export interface JwtHeader {
      *
      * The value of this claim is a string that identifies the algorithm used to sign or encrypt the JWT, such as "HS256" for HMAC-SHA256, "RS256" for RSA-SHA256, or "ES256" for ECDSA-SHA256.
      */
-    alg: 'RS256' | 'HS256' | 'RS256' | 'ES256';
+    alg?: 'RS256' | 'HS256' | 'RS256' | 'ES256';
     /**
      * Token Type: This claim is used to declare the media type of the JWT.
      *
      * The value of this claim is a string that specifies the media type of the token. The media type is usually set to "JWT" to indicate that the token is a JSON Web Token.
      */
-    typ: 'JWT';
+    typ?: 'JWT';
     /**
      * Content Type: This claim is used to declare the content type of the JWT.
      *

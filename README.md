@@ -42,8 +42,6 @@ Alternatively, pull the code from a specific commit hash:
 "jwt-asymmetric-authentication": "git+ssh://git@github.com:jlgriff/jwt-asymmetric-authentication.git#<commit-hash>"
 ```
 
-_Note: This hasn't been published to npm. If you want to see it published, let me know by creating an issue on the [Issues](https://github.com/jlgriff/jwt-asymmetric-authentication/issues) page._
-
 # Authentication
 
 The `generateToken` function will create signed tokens with the private key while the `isTokenAuthentic` function will validate those tokens with the public key.

@@ -1,13 +1,12 @@
-import { createSign, createVerify, createPrivateKey, createPublicKey, } from 'crypto';
+import { createSign, createVerify, createPrivateKey, createPublicKey } from 'crypto';
 import { resolve, dirname } from 'path';
 import { readFileSync } from 'fs';
 import { findUpSync } from 'find-up';
-import { JWT_DATE_CLAIM_NAMES, } from '../constants/constants.js';
+import { JWT_DATE_CLAIM_NAMES } from '../constants/constants.js';
 let privateKey;
 let publicKey;
 /**
  * Calculates an expiration date by incrementing the given date by a configured number of minutes
- *
  * @param date - date to calculate an expiration for
  * @param minutesToAdd - number of minutes to add to the passed-in date
  * @returns a date later than the given date
@@ -81,9 +80,10 @@ export const base64UrlEncode = (json) => Buffer.from(JSON.stringify(json)).toStr
  */
 export const base64UrlDecode = (encoded) => JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
 /**
- * Parses a JWT payload
+ * Parses a JWT's header, payload, and signature
  *
- * @param token - the JWT to be parsed
+ * @param token JWT to be parsed
+ * @returns Parsed JWT header, payload, and signature
  */
 export const parseToken = (token) => {
     const strippedToken = token.replace('Bearer ', '');
@@ -91,37 +91,41 @@ export const parseToken = (token) => {
     if (parts.length < 3) {
         throw new Error('JWT is invalid', { cause: 'JWT does not have a header, payload, and signature' });
     }
-    const header = base64UrlDecode(parts[0]);
-    const payload = base64UrlDecode(parts[1]);
-    if (header !== null && typeof header === 'object' && payload !== null && typeof payload === 'object') {
-        const headerObj = header;
-        const payloadObj = payload;
-        if (!('alg' in headerObj)) {
-            throw new Error('JWT header is missing an \'alg\' property');
+    // Parse JWT header
+    let headerObj = null;
+    try {
+        const header = parts[0].length > 0 && base64UrlDecode(parts[0]);
+        if (header && typeof header === 'object') {
+            headerObj = header;
         }
-        if (!('typ' in headerObj)) {
-            throw new Error('JWT header is missing a \'typ\' property');
-        }
-        JWT_DATE_CLAIM_NAMES.forEach((name) => {
-            if (name in payloadObj) {
-                payloadObj[name] = new Date(payloadObj[name]);
-            }
-        });
-        return {
-            header: headerObj,
-            payload: payloadObj,
-            signature: parts[2],
-        };
     }
-    throw new Error('JWT could not be parsed', { cause: `The following JWT could not be parsed into an object: ${token}` });
+    catch (e) { /* empty */ }
+    // Parse JWT payload
+    let payloadObj = null;
+    try {
+        const payload = parts[1].length > 0 && base64UrlDecode(parts[1]);
+        if (payload && typeof payload === 'object') {
+            JWT_DATE_CLAIM_NAMES.forEach((name) => {
+                if (name in payload) {
+                    payload[name] = new Date(payload[name]);
+                }
+            });
+            payloadObj = payload;
+        }
+    }
+    catch (e) { /* empty */ }
+    return {
+        header: headerObj || {},
+        payload: payloadObj || {},
+        signature: parts[2],
+    };
 };
 /**
  * Generates a JWT signature from the header, payload, and private key
- *
  * @param encodedHeader - base64url-encoded JWT header
  * @param encodedPayload - base64url-encoded JWT payload
  * @param privKey - private key object
- * @returns a JWT signature
+ * @returns JWT signature
  */
 const generateSignature = (encodedHeader, encodedPayload, privKey) => {
     const str = `${encodedHeader}.${encodedPayload}`;
@@ -131,9 +135,8 @@ const generateSignature = (encodedHeader, encodedPayload, privKey) => {
 };
 /**
  * Generates a JWT from the header, payload, and signature
- *
  * @param payload - data to include in the JWT payload
- * @returns a JWT
+ * @returns JWT
  */
 export const generateToken = (payload) => {
     if (!privateKey) {
@@ -146,9 +149,8 @@ export const generateToken = (payload) => {
 };
 /**
  * Determines whether or not a JWT can be validated and authenticated
- *
- * @param token - JWT
- * @returns whether the JWT can be authenticated and, if not, the reason why it cannot
+ * @param token JWT
+ * @returns Whether the JWT can be authenticated and, if not, the reason why it cannot
  */
 export const isTokenAuthentic = (token) => {
     if (!publicKey) {
@@ -175,7 +177,6 @@ export const isTokenAuthentic = (token) => {
 };
 /**
  * Determines whether or not a JWT is expired
- *
  * @param payload JWT parsed payload
  * @param dateToCheck Optional date to check if after the token's expiration (if not present, token expiration will be checked as of now)
  * @returns Whether or not a JWT is expired
