@@ -81,9 +81,10 @@ export const base64UrlEncode = (json) => Buffer.from(JSON.stringify(json)).toStr
  */
 export const base64UrlDecode = (encoded) => JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8'));
 /**
- * Parses a JWT payload
+ * Parses a JWT's header, payload, and signature
  *
- * @param token - the JWT to be parsed
+ * @param token JWT to be parsed
+ * @returns Parsed JWT header, payload, and signature
  */
 export const parseToken = (token) => {
     const strippedToken = token.replace('Bearer ', '');
@@ -91,29 +92,34 @@ export const parseToken = (token) => {
     if (parts.length < 3) {
         throw new Error('JWT is invalid', { cause: 'JWT does not have a header, payload, and signature' });
     }
-    const header = base64UrlDecode(parts[0]);
-    const payload = base64UrlDecode(parts[1]);
-    if (header !== null && typeof header === 'object' && payload !== null && typeof payload === 'object') {
-        const headerObj = header;
-        const payloadObj = payload;
-        if (!('alg' in headerObj)) {
-            throw new Error('JWT header is missing an \'alg\' property');
+    // Parse JWT header
+    let headerObj = {};
+    try {
+        const header = base64UrlDecode(parts[0]);
+        if (header && typeof header === 'object') {
+            headerObj = header;
         }
-        if (!('typ' in headerObj)) {
-            throw new Error('JWT header is missing a \'typ\' property');
-        }
-        JWT_DATE_CLAIM_NAMES.forEach((name) => {
-            if (name in payloadObj) {
-                payloadObj[name] = new Date(payloadObj[name]);
-            }
-        });
-        return {
-            header: headerObj,
-            payload: payloadObj,
-            signature: parts[2],
-        };
     }
-    throw new Error('JWT could not be parsed', { cause: `The following JWT could not be parsed into an object: ${token}` });
+    catch (e) { /* empty */ }
+    // Parse JWT payload
+    let payloadObj = {};
+    try {
+        const payload = base64UrlDecode(parts[1]);
+        if (payload && typeof payload === 'object') {
+            payloadObj = payload;
+            JWT_DATE_CLAIM_NAMES.forEach((name) => {
+                if (name in payload) {
+                    payloadObj[name] = new Date(payloadObj[name]);
+                }
+            });
+        }
+    }
+    catch (e) { /* empty */ }
+    return {
+        header: headerObj,
+        payload: payloadObj,
+        signature: parts[2],
+    };
 };
 /**
  * Generates a JWT signature from the header, payload, and private key

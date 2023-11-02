@@ -22,9 +22,10 @@ export declare const base64UrlEncode: (json: any) => string;
  */
 export declare const base64UrlDecode: (encoded: string) => unknown;
 /**
- * Parses a JWT payload
+ * Parses a JWT's header, payload, and signature
  *
- * @param token - the JWT to be parsed
+ * @param token JWT to be parsed
+ * @returns Parsed JWT header, payload, and signature
  */
 export declare const parseToken: (token: string) => JwtParsed;
 /**
