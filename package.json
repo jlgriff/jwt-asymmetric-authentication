@@ -34,7 +34,7 @@
   "type": "module",
   "scripts": {
     "build": "npx tsc && npm run copy-test-keys",
-    "copy-test-keys": "cp -r ts/test/keys dist/test/keys",
+    "copy-test-keys": "cp -r ts/test/keys dist/test",
     "test": "npm run build && npx mocha 'dist/test/**/*.js'"
   },
   "dependencies": {
@@ -42,9 +42,9 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.3",
-    "@types/node": "^20.8.9",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
+    "@types/node": "^20.8.10",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "dotenv": "^16.3.1",
     "eslint": "^8.52.0",
     "eslint-config-airbnb-base": "^15.0.0",
